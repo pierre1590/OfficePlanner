@@ -11,6 +11,7 @@ import AuthContextProvider, {AuthContext} from './context/auth-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Day} from './screens/Day';
 import {Calendar} from './screens/Calendar';
+import {AddEvent} from './screens/AddEvent';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
@@ -53,18 +54,18 @@ function AuthenticatedStack() {
       inactiveColor={Colors.secondary}
       initialRouteName='Day'
     >
-
-      <Tab.Screen
+   
+     <Tab.Screen
         name="Day"
         component={Day}
         options={{
           title: 'Today',
           tabBarIcon: ({color}) => (
             <Ionicons name="md-today" color={color} size={30} />
-          ),
+          )
         }}
-      />
-      
+      /> 
+       
       <Tab.Screen
         name="Calendar"
         component={Calendar}
@@ -75,10 +76,14 @@ function AuthenticatedStack() {
           ),
         }}
       />
-      
+       
     </Tab.Navigator>
   );
 }
+
+      
+   
+
   
 
 function Navigation() {

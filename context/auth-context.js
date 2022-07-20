@@ -7,6 +7,7 @@ export const AuthContext = createContext({
   isAuthenticated: false,
   authenticate: (token) => {},
   logout: () => {},
+  addEvent: (event) => {},
 });
 
 function AuthContextProvider({ children }) {
@@ -26,11 +27,14 @@ function AuthContextProvider({ children }) {
     AsyncStorage.removeItem('token');
   }
 
+  
+
   const value = {
     token: authToken,
     isAuthenticated: !!authToken,
     authenticate: authenticate,
     logout: logout,
+    
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

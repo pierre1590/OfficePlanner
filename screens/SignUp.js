@@ -5,7 +5,7 @@ import { Formik } from 'formik';
 import {AuthContext} from '../context/auth-context';
 import * as Yup from 'yup';
 import  {createUser} from '../util/auth';
-
+import {KeyboardAvoidingComponent} from '../components/UI/KeyboardAvoidingView';
 
 const SignUpSchema = Yup.object().shape({
     email: Yup.string().email('Please enter valid email').required('Email is required').lowercase(),
@@ -21,6 +21,7 @@ export const SignUp = ({navigation}) => {
 
 return (
   <>
+  <KeyboardAvoidingComponent>
   <ScrollView>
     <Formik
       initialValues={{ email: "", password: ""}}
@@ -121,6 +122,7 @@ return (
       </Button>
     </View>
     </ScrollView>
+    </KeyboardAvoidingComponent>
   </>
 );
 }

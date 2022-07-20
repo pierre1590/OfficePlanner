@@ -5,6 +5,7 @@ import { Formik } from 'formik';
 import {AuthContext} from '../context/auth-context';
 import * as Yup from 'yup';
 import  {login} from '../util/auth';
+import {KeyboardAvoidingComponent} from '../components/UI/KeyboardAvoidingView';
 
 
 
@@ -22,6 +23,7 @@ const authCtx = useContext(AuthContext);
 
 return (
   <>
+    <KeyboardAvoidingComponent>
     <ScrollView>
     
     <Formik
@@ -114,6 +116,7 @@ return (
         </Button>
       </View>
     </ScrollView>
+    </KeyboardAvoidingComponent>
   </>
 );
 }

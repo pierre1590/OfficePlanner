@@ -5,13 +5,17 @@ import {IconButton} from '../components/UI/IconButton';
 import {Colors} from '../costants/colors';
 import {AuthContext} from '../context/auth-context';
 import { Alert } from 'react-native';
+
+
+
+
 export const Calendar = () => {
+
   const [selectedStartDate, setSelectedStartDate] = useState(startDate);
-  
   const startDate = selectedStartDate
     ? selectedStartDate.format("YYYY-MM-DD").toString()
     : "";
- 
+  
  const authCtx = useContext(AuthContext);
 
     useEffect(() => {
@@ -28,7 +32,7 @@ export const Calendar = () => {
     }, []);
 
    
-    
+
    
 
     
@@ -36,8 +40,8 @@ export const Calendar = () => {
   return (
    <>
    <View style={styles.container}>
+   <View>
     <CalendarPicker onDateChange={setSelectedStartDate} />
-    <Text style={styles.dateText}>{startDate}</Text>
    </View>
    <View style={styles.buttonContainer}>
     <IconButton
@@ -57,10 +61,14 @@ export const Calendar = () => {
         ])
       }}
       /> 
+      <Text style={styles.dateText}>{startDate}</Text>
       <IconButton
         icon='add'
         size={30}
         color={Colors.primary}
+        onPress={(navigation) => {
+          navigation.navigate("AddEvent");
+        }}
         />
     </View>
    <ScrollView style={styles.events}>
@@ -68,8 +76,7 @@ export const Calendar = () => {
       Eventi del giorno
     </Text>
    </ScrollView>
-   
-    
+    </View>
    </>
     );
 };
@@ -81,20 +88,22 @@ const styles = StyleSheet.create({
    
   },
   dateText: {
-    margin: 20,
+    margin: 5,
     fontSize: 20,
+    fontWeight: 'bold',
     justifyContent: 'center',
     alignItems: 'center',
     textAlign : 'center',
+    color: Colors.primary,
   },
   events: {
-    marginVertical: 0,
+   backgroundColor: '#fff',
   },
   buttonContainer: {
-    justifyContent: 'space-around',  
+    justifyContent: 'space-between',  
     alignItems: 'center',
     flexDirection: 'row',
-    fontSize:20,
-    marginBottom:20,
+    fontSize:18,
+    marginTop:1,
   }
 });
