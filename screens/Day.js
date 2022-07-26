@@ -15,7 +15,9 @@ export const Day = () => {
 
  //current date in format YYYY-MM-DD
   const date = new Date().toISOString().slice(0,10);
-
+  
+  //retrieve events on a per day basis
+ // const events = events.filter(event => event.date === date);
 
   return (
     <>
@@ -38,18 +40,14 @@ export const Day = () => {
       }}
       />
       <Text style={styles.date}>{date}</Text>
-      <IconButton
-        icon='add'
-        size={30}
-        color={Colors.primary}
-        onPress={() => {
-          navigate.navigate('AddEvent');
-        }
-        }
-        />
     </View>
     <ScrollView style={styles.eventsContainer}>
-      <Text>Eventi del giorno</Text>
+      {/* {events.map(event => (
+        <View key={event.id} style={styles.event}>
+          <Text style={styles.eventTitle}>{event.title}</Text>
+          <Text style={styles.eventDescription}>{event.description}</Text>
+        </View>
+      ))} */}
       
     </ScrollView>
    
@@ -69,7 +67,8 @@ const styles = StyleSheet.create({
 
   },
   date: {
-    fontSize: 20,
+    fontSize: 22,
+    marginRight: 50,
     color: Colors.primary,
     fontWeight: "bold",
     justifyContent: 'center',

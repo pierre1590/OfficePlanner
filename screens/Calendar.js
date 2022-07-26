@@ -10,12 +10,11 @@ import { Alert } from 'react-native';
 
 
 export const Calendar = () => {
-
+//setup startDate to current date
   const [selectedStartDate, setSelectedStartDate] = useState(startDate);
   const startDate = selectedStartDate
     ? selectedStartDate.format("YYYY-MM-DD").toString()
-    : "";
-  
+    : "";  
  const authCtx = useContext(AuthContext);
 
     useEffect(() => {
@@ -25,8 +24,8 @@ export const Calendar = () => {
           const calendars = await Calendar.getCalendarsAsync(
             Calendar.EntityTypes.EVENT
           );
-          console.log('Here are all your calendars:');
-          console.log({ calendars });
+          console.log(calendars);
+
         }
       })();
     }, []);
@@ -62,19 +61,9 @@ export const Calendar = () => {
       }}
       /> 
       <Text style={styles.dateText}>{startDate}</Text>
-      <IconButton
-        icon='add'
-        size={30}
-        color={Colors.primary}
-        onPress={(navigation) => {
-          navigation.navigate("AddEvent");
-        }}
-        />
     </View>
    <ScrollView style={styles.events}>
-    <Text>
-      Eventi del giorno
-    </Text>
+   
    </ScrollView>
     </View>
    </>
@@ -89,7 +78,8 @@ const styles = StyleSheet.create({
   },
   dateText: {
     margin: 5,
-    fontSize: 20,
+    marginRight:100,
+    fontSize: 23,
     fontWeight: 'bold',
     justifyContent: 'center',
     alignItems: 'center',
@@ -97,7 +87,9 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
   events: {
-   backgroundColor: '#fff',
+   backgroundColor: Colors.tertiary,
+   borderRadius: 2,
+   backgroundColor: Colors.grey,
   },
   buttonContainer: {
     justifyContent: 'space-between',  
@@ -105,5 +97,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     fontSize:18,
     marginTop:1,
+  },
+  eventText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    margin: 5,
+    marginLeft: 10,
+    marginRight: 10,
+    textAlign: 'center',
   }
 });

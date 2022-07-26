@@ -13,7 +13,7 @@ import {Day} from './screens/Day';
 import {Calendar} from './screens/Calendar';
 import {AddEvent} from './screens/AddEvent';
 import {SafeAreaView} from 'react-native-safe-area-context';
-
+import {init} from './util/database'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import {Ionicons} from '@expo/vector-icons';
 
@@ -65,17 +65,36 @@ function AuthenticatedStack() {
           )
         }}
       /> 
+
+
+<Tab.Screen
+        name="Add Event"
+        component={AddEvent}
+        options={{
+          marginTop: 15,
+          title: "Add Event",
+          tabBarIcon: ({color}) => (
+            <Ionicons name="md-add-circle-outline" size={28} color={color} />
+          ),
+        }}
+      />
+
        
       <Tab.Screen
         name="Calendar"
         component={Calendar}
         options={{
+          marginTop: 15,
           title: "Calendar",
           tabBarIcon: ({color}) => (
             <Ionicons name="md-calendar-outline" size={30} color={color} />
           ),
         }}
       />
+
+      
+
+
        
     </Tab.Navigator>
   );
@@ -128,6 +147,20 @@ function Root() {
 }
 
 export default function App() {
+  const [dbInitialized, setDbInitialized] = useState(false);
+
+  useEffect(() => {
+    init().then(() => {
+      setDbInitialized(true);
+    })
+    .catch(err => {
+      console.log(err);
+    })
+  }, []);
+
+  if (!dbInitialized) {
+    return <Text>App Loading</Text>
+  }
   
   return (
     <>
