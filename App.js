@@ -22,7 +22,6 @@ const Stack = createNativeStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 
 
-
 function AuthStack() {
   return (
     <Stack.Navigator 

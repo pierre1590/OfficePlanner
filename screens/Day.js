@@ -1,33 +1,46 @@
 import {useContext,useState,useEffect} from 'react';
-import { StyleSheet, Text, View,ScrollView,Alert, FlatList} from 'react-native';
+import { StyleSheet, Text, View,Alert, FlatList} from 'react-native';
 import { Colors } from '../costants/colors';
 import {AuthContext} from '../context/auth-context';
 import { IconButton } from '../components/UI/IconButton';
-import {useNavigation} from '@react-navigation/native';
-import { getEventsForDate } from '../util/database';
+import { getEvents } from '../util/database';
 
 
 export const Day = () => {
   const authCtx = useContext(AuthContext);
 
-  // Use the IconButton add to open the AddEvent screen
-  const navigate = useNavigation();
+
  
 
  //current date in format YYYY-MM-DD
   const date = new Date().toISOString().slice(0,10);
   
   //get events for current date with getEventsForDate
-  const [events,setEvents] = useState([] || null);
-  console.log(events);
-  useEffect(() => {
-    (async () => {
-      const events = await getEventsForDate(date);
-      setEvents(events);
-    })();
-  }, []);
+  const [schedule,setSchedule] = useState([] || null);
 
-  console.log(events);
+  //useEffect with try/catch to get events for current date
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       const events = await getEvents();
+  //       setSchedule(events);
+  //     }
+  //     catch(err) {
+  //       console.log(err);
+  //     }
+  //   })();
+  // }, [date]);
+
+  //useEffect with async/await to get events for current date
+useEffect(()=> {
+  const getAllEvents = async () => {
+    const data = await getEvents(date);
+    setSchedule(data);
+  }
+  getAllEvents();
+},[date]);
+
+
 
   return (
     <>
@@ -51,24 +64,31 @@ export const Day = () => {
       />
       <Text style={styles.date}>{date}</Text>
     </View>
-    <FlatList 
-      style={styles.eventsContainer}
-      data={events}
-      renderItem={({item}) => {
-        return (
+   
+    {schedule.length > 0 ? (
+      <FlatList
+        data={schedule}
+        keyExtractor={(item,index) => index.toString()}
+        renderItem={({ item }) => (
           <View style={styles.event}>
-            <Text style={styles.eventTitle}>{item.title}</Text>
-            <Text style={styles.eventTime}>{item.time}</Text>
+              
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.description}>{item.description}</Text>
           </View>
-        )
-      }
-      }
-      keyExtractor={item => item.id}
-    />
-    
+        )}
+      />
+    ) : (
+      <View style={styles.noEvents}>
+        <Text style={styles.noEventsText}>No events</Text>
+      </View>
+    )}
+   
     </>
   );
-}
+  
+        }
+    
+   
 
 
 const styles = StyleSheet.create({
@@ -79,7 +99,6 @@ const styles = StyleSheet.create({
    alignItems: 'center',
    flexDirection: 'row',
    fontSize:20,
-
   },
   date: {
     fontSize: 22,
@@ -92,4 +111,39 @@ const styles = StyleSheet.create({
   eventsContainer:{
     marginTop: 20,
   },
+  event:{
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 20,
+    padding: 15,
+    borderRadius: 10,
+    backgroundColor: Colors.primaryLight,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  title:{
+   
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: Colors.classic,
+  },
+  description:{
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: 18,
+
+  },
+  noEvents: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 30,
+  },
+  noEventsText: {
+    fontSize: 25,
+    fontWeight: 'bold',
+  }
 });

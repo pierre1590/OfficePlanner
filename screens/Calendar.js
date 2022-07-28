@@ -5,6 +5,7 @@ import {IconButton} from '../components/UI/IconButton';
 import {Colors} from '../costants/colors';
 import {AuthContext} from '../context/auth-context';
 import { Alert } from 'react-native';
+import { getEvents } from '../util/database';
 
 
 
@@ -20,19 +21,8 @@ export const Calendar = () => {
 
  const [schedule,setSchedule] = useState([] || '');
 
+ const date = new Date().toISOString().slice(0,10);
  
-
- 
-
-  
-  
-  
-  
-
-
-
-  
-
     useEffect(() => {
       (async () => {
         const { status } = await Calendar.requestCalendarPermissionsAsync();
@@ -45,6 +35,15 @@ export const Calendar = () => {
         }
       })();
     }, []);
+
+    useEffect(()=> {
+      const getAllEvents = async () => {
+        const data = await getEvents(date);
+        setSchedule(data);
+      }
+      getAllEvents();
+    },[date]);
+  
 
     
 
@@ -74,19 +73,25 @@ export const Calendar = () => {
           />
           <Text style={styles.dateText}>{startDate}</Text>
         </View>
-        <FlatList
-          style={styles.events}
-          data={schedule}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => {
-            return (
-              <View>
-                <Text style={styles.eventTitle}>{item.title}</Text>
-                <Text style={styles.eventDescription}>{item.description}</Text>
-              </View>
-            );
-          }}
-        />
+        {schedule.length > 0 ? (
+      <FlatList
+      style={styles.events}
+        data={schedule}
+        keyExtractor={(item,index) => index.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.event}>
+              
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.description}>{item.description}</Text>
+          </View>
+        )}
+      />
+    ) : (
+      <View style={styles.noEvents}>
+        <Text style={styles.noEventsText}>No events</Text>
+      </View>
+    )}
+   
       </View>
     </>
   );
@@ -109,7 +114,6 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
   events: {
-   backgroundColor: Colors.tertiary,
    borderRadius: 2,
    backgroundColor: Colors.grey,
   },
@@ -120,12 +124,41 @@ const styles = StyleSheet.create({
     fontSize:18,
     marginTop:1,
   },
-  eventText: {
+  event:{
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 60,
+    marginBottom: 15,
+    marginTop: 15,
+    width: '70%',
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: Colors.primaryLight,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  title:{
     fontSize: 18,
     fontWeight: 'bold',
-    margin: 5,
-    marginLeft: 10,
-    marginRight: 10,
-    textAlign: 'center',
+    color: Colors.classic,
+  },
+  description:{
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: 16,
+
+  },
+  noEvents: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 30,
+  },
+  noEventsText: {
+    fontSize: 25,
+    fontWeight: 'bold',
   }
 });

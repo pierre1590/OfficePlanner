@@ -21,13 +21,13 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingVertical: 6,
     paddingHorizontal: 12,
-    backgroundColor: Colors.secondary,
+    backgroundColor: Colors.primary,
     elevation: 2,
     shadowColor: 'black',
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    width: '40%',
+   justifyContent: 'center'
   },
   pressed: {
     opacity: 0.7,

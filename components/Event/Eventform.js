@@ -27,16 +27,17 @@ export const EventForm = ({onCreateEvent}) =>  {
  
     
    
-    const saveEventHandler = () => {
+    const saveEventHandler = async() => {
         if (enteredTitle.trim().length === 0 || enteredDescription.trim().length === 0 ) {
-            Alert.alert("Error","Plese enter a title and description",[
-              {text:'OK'}
+            Alert.alert("Blank fields","The title and/or description fields are empty.",[
+              {text:'OK'},
           ]);
         }
         const event = new Event(enteredTitle, enteredDescription,enteredDate,enteredTime);
-        onCreateEvent(event);
-        setEnteredTitle('');
-        setEnteredDescription('');
+        const results = await onCreateEvent(event);
+        setEnteredTitle("");
+        setEnteredDescription("");  
+        console.log(results);
        
     }
 

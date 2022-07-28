@@ -7,13 +7,13 @@ export function init() {
   const promise = new Promise((resolve, reject) => {
       database.transaction(tx => {
           tx.executeSql(
-              `CREATE TABLE IF NOT EXISTS events (
-                  id INTEGER PRIMARY KEY  NOT NULL,
-                  title TEXT NOT NULL,
-                  description TEXT NOT NULL, 
-                  date TEXT NOT NULL,
-                  hour TEXT NOT NULL
-                  )`,
+            `CREATE TABLE IF NOT EXISTS events (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              title TEXT NOT NULL,
+              description TEXT NOT NULL, 
+              date TEXT NOT NULL,
+              hour TEXT NOT NULL
+              )`,
               [],
               () => {
                   resolve();
@@ -35,7 +35,7 @@ export function insertEvent(event) {
           `INSERT INTO events (title, description,date, hour) VALUES (?, ?, ?, ?)`,
           [
             event.title,
-            event.desciption,
+            event.description,
             event.date,
             event.hour,
           ],
@@ -52,17 +52,18 @@ export function insertEvent(event) {
     return promise;
   }
 
-  // function to retrieve events for date
-  export function getEventsForDate(date) {
+  // function to retrieve all events
+  export function getEvents() {
     const promise = new Promise((resolve, reject) => {
       database.transaction((tx) => {
         tx.executeSql(
-          `SELECT * FROM events WHERE date = ?`,
-          [date],
+          `SELECT * FROM events`,
+          [],
           (_, result) => {
-            const dbEvent = result.rows._array.map(row => {
-              return new Event(row.id, row.title, row.description, row.date, row.hour);
+            const dbEvent = result.rows._array.map((row) => {
+              return new Event(row.title, row.description, row.date, row.hour);
             });
+            console.log(dbEvent);
             resolve(dbEvent);
           },
           (_, error) => {
@@ -73,3 +74,7 @@ export function insertEvent(event) {
     });
     return promise;
   }
+
+
+
+  

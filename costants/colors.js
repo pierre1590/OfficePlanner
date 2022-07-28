@@ -5,5 +5,5 @@ export const Colors = {
     tertiary: '#1ae',
     error: '#f00',
     classic: '#fff',
-    grey: '#ccc'
+    grey: 'grey'
 }
