@@ -1,9 +1,10 @@
-import {useContext} from 'react';
-import { StyleSheet, Text, View,ScrollView,Alert} from 'react-native';
+import {useContext,useState,useEffect} from 'react';
+import { StyleSheet, Text, View,ScrollView,Alert, FlatList} from 'react-native';
 import { Colors } from '../costants/colors';
 import {AuthContext} from '../context/auth-context';
 import { IconButton } from '../components/UI/IconButton';
 import {useNavigation} from '@react-navigation/native';
+import { getEventsForDate } from '../util/database';
 
 
 export const Day = () => {
@@ -16,8 +17,17 @@ export const Day = () => {
  //current date in format YYYY-MM-DD
   const date = new Date().toISOString().slice(0,10);
   
-  //retrieve events on a per day basis
- // const events = events.filter(event => event.date === date);
+  //get events for current date with getEventsForDate
+  const [events,setEvents] = useState([] || null);
+  console.log(events);
+  useEffect(() => {
+    (async () => {
+      const events = await getEventsForDate(date);
+      setEvents(events);
+    })();
+  }, []);
+
+  console.log(events);
 
   return (
     <>
@@ -41,16 +51,21 @@ export const Day = () => {
       />
       <Text style={styles.date}>{date}</Text>
     </View>
-    <ScrollView style={styles.eventsContainer}>
-      {/* {events.map(event => (
-        <View key={event.id} style={styles.event}>
-          <Text style={styles.eventTitle}>{event.title}</Text>
-          <Text style={styles.eventDescription}>{event.description}</Text>
-        </View>
-      ))} */}
-      
-    </ScrollView>
-   
+    <FlatList 
+      style={styles.eventsContainer}
+      data={events}
+      renderItem={({item}) => {
+        return (
+          <View style={styles.event}>
+            <Text style={styles.eventTitle}>{item.title}</Text>
+            <Text style={styles.eventTime}>{item.time}</Text>
+          </View>
+        )
+      }
+      }
+      keyExtractor={item => item.id}
+    />
+    
     </>
   );
 }

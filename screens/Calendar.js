@@ -1,10 +1,11 @@
 import {useState,useEffect,useContext} from 'react';
-import {Text,StyleSheet,View,ScrollView} from 'react-native';
+import {Text,StyleSheet,View, FlatList} from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 import {IconButton} from '../components/UI/IconButton';
 import {Colors} from '../costants/colors';
 import {AuthContext} from '../context/auth-context';
 import { Alert } from 'react-native';
+
 
 
 
@@ -16,6 +17,21 @@ export const Calendar = () => {
     ? selectedStartDate.format("YYYY-MM-DD").toString()
     : "";  
  const authCtx = useContext(AuthContext);
+
+ const [schedule,setSchedule] = useState([] || '');
+
+ 
+
+ 
+
+  
+  
+  
+  
+
+
+
+  
 
     useEffect(() => {
       (async () => {
@@ -30,44 +46,50 @@ export const Calendar = () => {
       })();
     }, []);
 
-   
-
-   
-
     
 
   return (
-   <>
-   <View style={styles.container}>
-   <View>
-    <CalendarPicker onDateChange={setSelectedStartDate} />
-   </View>
-   <View style={styles.buttonContainer}>
-    <IconButton
-        icon='md-exit-outline'
-        size={30}
-        color={Colors.primary}
-        onPress={() => {
-        Alert.alert('Logout', 'Are you sure you want to logout?', [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'OK',
-            onPress: () => authCtx.logout(),
-          },
-        ])
-      }}
-      /> 
-      <Text style={styles.dateText}>{startDate}</Text>
-    </View>
-   <ScrollView style={styles.events}>
-   
-   </ScrollView>
-    </View>
-   </>
-    );
+    <>
+      <View style={styles.container}>
+        <View>
+          <CalendarPicker onDateChange={setSelectedStartDate} />
+        </View>
+        <View style={styles.buttonContainer}>
+          <IconButton
+            icon="md-exit-outline"
+            size={30}
+            color={Colors.primary}
+            onPress={() => {
+              Alert.alert("Logout", "Are you sure you want to logout?", [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                {
+                  text: "OK",
+                  onPress: () => authCtx.logout(),
+                },
+              ]);
+            }}
+          />
+          <Text style={styles.dateText}>{startDate}</Text>
+        </View>
+        <FlatList
+          style={styles.events}
+          data={schedule}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => {
+            return (
+              <View>
+                <Text style={styles.eventTitle}>{item.title}</Text>
+                <Text style={styles.eventDescription}>{item.description}</Text>
+              </View>
+            );
+          }}
+        />
+      </View>
+    </>
+  );
 };
 
 const styles = StyleSheet.create({

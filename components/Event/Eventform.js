@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Event } from "../../models/event";
 import {Button} from '../../components/UI/Button';
-import { View, StyleSheet, Text,TextInput,Alert } from "react-native";
+import { View, StyleSheet, Text,TextInput,Alert, ScrollView } from "react-native";
 import { Colors } from "../../costants/colors";
 import {useNavigation} from "@react-navigation/native";
 import {Datepicker} from "../../components/Datepicker/Datepicker";
@@ -24,15 +24,20 @@ export const EventForm = ({onCreateEvent}) =>  {
         setEnteredDescription(description);
     }
    
+ 
     
    
     const saveEventHandler = () => {
         if (enteredTitle.trim().length === 0 || enteredDescription.trim().length === 0 ) {
-            return;
+            Alert.alert("Error","Plese enter a title and description",[
+              {text:'OK'}
+          ]);
         }
         const event = new Event(enteredTitle, enteredDescription,enteredDate,enteredTime);
-        console.log(event);
         onCreateEvent(event);
+        setEnteredTitle('');
+        setEnteredDescription('');
+       
     }
 
     //If the user click on Cancel button it return to Day page
@@ -64,8 +69,9 @@ export const EventForm = ({onCreateEvent}) =>  {
 
     return (
       <>
+      
+      <ScrollView style={styles.container}>
         <View style={styles.form}>
-        
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Title</Text>
             <TextInput
@@ -78,17 +84,19 @@ export const EventForm = ({onCreateEvent}) =>  {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Description</Text>
             <TextInput
-              style={styles.input}
+              style={styles.inputDescription}
               placeholder="Enter description"
               value={enteredDescription}
               onChangeText={changeDescriptionHandler}
+              multiline
+              numberOfLines={10}
             />
           </View>
           <View style={styles.inputContainer}>
-            <Datepicker enteredDate={enteredDate} />
+            <Datepicker enteredDate={enteredDate} setEnteredDate={setEnteredDate} />
           </View>
           <View style={styles.inputContainer}>
-            <TimePicker enteredTime={enteredTime} />
+            <TimePicker enteredTime={enteredTime} setEnteredTime={setEnteredTime}/>
           </View>
           <View style={styles.buttonContainer}>
             <Button onPress={cancelEventHandler} style={styles.cancelBtn}>
@@ -97,61 +105,72 @@ export const EventForm = ({onCreateEvent}) =>  {
             <Button onPress={saveEventHandler} style={styles.sendBtn}>
               Save
             </Button>
-          </View>
-          <View>
-       
-          </View>
+          </View>      
         </View>      
+      </ScrollView>
       </>
     );
   }
 
 const styles = StyleSheet.create({
+    container:{
+     backgroundColor: Colors.primaryLight,
+    flex: 1,
+    },
     form:{
-       top:25,
-        flex:1,
-       padding: 20,
-        
+      padding: 20,
+      top:50,
     },
     inputContainer:{
         width: '90%',
         height: 80,
         marginBottom: 10,
         padding: 10,
-        borderColor: '#ccc',
-        borderWidth: 1,
-        borderRadius: 5,
         alignSelf: 'center',
     },
     label:{
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    input:{
+      },
+     input:{
         fontSize: 18,
-        padding: 5,
+        padding: 10,
         borderWidth: 0,
         borderRadius: 5,
         backgroundColor: '#fff',
         color: Colors.tertiary,
         width: '100%',
+        
+    },
+    inputDescription:{
+      fontSize: 18,
+      padding: 10,
+      borderWidth: 0,
+      borderRadius: 5,
+      backgroundColor: '#fff',
+      color: Colors.tertiary,
+      width: '100%',
+      height: '100%',
+     
     },
     buttonContainer:{
-         padding: 10,
+        flexDirection: 'row',
+        top:10,
+        padding: 20,
+        margin:15,
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         
     },
     cancelBtn:{
-     
+      
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',  
     },
     sendBtn:{
-       
+     
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',

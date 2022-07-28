@@ -1,55 +1,71 @@
 import React, {useState} from 'react';
-import {TextInput,View, Platform,Text, Button} from 'react-native';
-import { DateTimePicker } from '@react-native-community/datetimepicker';
+import {StyleSheet,View, Platform,Text} from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker'; 
 import { Colors } from '../../costants/colors';
-import moment from 'moment';
+
 import {Ionicons} from '@expo/vector-icons';
 
-export const Datepicker = () => {
-   
-    const [date, setDate] = useState(new Date());
-    const [mode, setMode] = useState('date');
-    const [show, setShow] = useState(false);
+export const Datepicker = ({enteredDate, setEnteredDate}) => {
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
 
-    const onChange = (event,selectedDate) => {
-        const currentDate = selectedDate || date;
-        setShow(Platform.OS === 'ios' ? true : false);
-        setDate(currentDate);
-    }
+  const onChange = (event,selectedDate) => {
+      const currentDate =  selectedDate || enteredDate;
+      console.log(currentDate)
+      setShow(Platform.OS === 'ios' ? true : false);
+      setEnteredDate(currentDate);
+  }
 
-    const showMode = currentMode => {
-        setShow(true);
-        setMode(currentMode);
-    }
+  const showMode = currentMode => {
+      setShow(true);
+      setMode(currentMode);
+  }
 
-    const showDatepicker = () => {
-        showMode('date');
-       
-    }
+  const showDatepicker = () => {
+      showMode('date');
+  }
+ 
+  const formatDate =  enteredDate.toLocaleDateString('en-GB').split('/').reverse().join('/');
 
-    
-   
-  return (
-    <>
-      <View>
-        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Select date</Text>
-        <Text style={{ marginTop: 10, fontSize: 18, backgroundColor: Colors.classic, color: Colors.tertiary, padding: 5 }} onPress={showDatepicker}>
-            {date.toDateString()}
-            <Ionicons name="md-calendar" size={20} color={Colors.tertiary} />
-        </Text>
-        
-        
-        {show && (
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={new Date()}
-            mode={mode}
-            is24Hour={true}
-            display="calendar"
-            onChange={onChange}
-          />
-          )}
+return (
+    <View >
+      <Text style={{ fontSize: 18, fontWeight: "bold" }}>Select date</Text>
+      <View style={styles.input}>
+         <Text style={{ fontSize: 18, color:Colors.tertiary,top:2 }}onPress={showDatepicker}> 
+            {formatDate || ''}
+          </Text>
+          <Ionicons name="md-calendar" size={20} color={Colors.tertiary} />
       </View>
-    </>
-  );
+      
+     
+     {show && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={enteredDate}
+          mode={mode}
+          is24Hour={true}
+          display={Platform.OS === 'ios' ? 'default' : 'calendar'}
+          onChange={onChange}
+
+        />
+        )}
+      
+    </View>
+);
 }
+
+const styles = StyleSheet.create({
+  input:{
+    top:5,
+    fontSize: 18,
+    padding: 5,
+    borderWidth: 0,
+    borderRadius: 5,
+    backgroundColor: '#fff',
+    color: Colors.tertiary,
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+}
+});

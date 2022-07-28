@@ -1,20 +1,19 @@
 import React, {useState} from 'react';
-import {Text,View} from 'react-native';
-import { DateTimePicker } from '@react-native-community/datetimepicker';
+import {Text,View,StyleSheet} from 'react-native';
+import  DateTimePicker  from '@react-native-community/datetimepicker';
 import { Colors } from '../../costants/colors';
-import moment from 'moment';
 import {Ionicons} from '@expo/vector-icons';
 
-export const TimePicker = () => {
-   //Create a new Datepicker to select the date 
-    const [time, setTime] = useState(new Date());
+
+export const TimePicker = ({enteredTime,setEnteredTime}) => {
     const [mode, setMode] = useState('time');
     const [show, setShow] = useState(false);
 
-    const onChange = (event, selectedTime) => {
-        const currentTime = selectedTime || time;
+    const onChange = (event,selectedTime) => {
+        const currentTime = selectedTime  || enteredTime;
+        console.log(currentTime)
         setShow(Platform.OS === 'ios' ? true : false);
-        setTime(currentTime);
+        setEnteredTime(currentTime);
     }
     
     
@@ -27,6 +26,11 @@ export const TimePicker = () => {
         showMode('time');
     }
 
+// select the time of the chosen date
+    const formatTime =  enteredTime.toLocaleTimeString('en-US', {
+        hour:'2-digit',
+        minute: '2-digit',
+    });
 
     
 
@@ -37,18 +41,20 @@ export const TimePicker = () => {
     <View>
      
         <Text style={{fontSize:18,fontWeight: 'bold'}}>Select hour</Text>
-        {/*Date in format YYYY/MM/DD */}
-        <Text style={{marginTop: 10,fontSize:18,backgroundColor:Colors.classic,color:Colors.tertiary,padding:5}} onPress={showTimepicker}>
-            {moment(time).format('LT')}
-            <Ionicons name="md-timer-outline" size={20} color={Colors.tertiary} />
-        </Text>
+        <View style={styles.input}>
+         <Text style={{ fontSize: 18, color:Colors.tertiary,top:2 }}onPress={showTimepicker}> 
+            {formatTime || ''}
+          </Text>
+          <Ionicons name="md-time" size={20} color={Colors.tertiary} />
+      </View>
+        
         {show && (
             <DateTimePicker
                 testID="dateTimePicker"
-                value={date}
+                value={enteredTime}
                 mode={mode}
                 is24Hour={true}
-                display="clock"
+                display={Platform.OS === 'ios' ? 'default' : 'clock'}
                 onChange={onChange}
                 
             />
@@ -59,3 +65,20 @@ export const TimePicker = () => {
     
   )
 }
+
+
+const styles = StyleSheet.create({
+    input:{
+      top:5,
+      fontSize: 18,
+      padding: 5,
+      borderWidth: 0,
+      borderRadius: 5,
+      backgroundColor: '#fff',
+      color: Colors.tertiary,
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+  }
+  });
