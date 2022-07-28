@@ -57,13 +57,15 @@ export const EventForm = ({onCreateEvent}) =>  {
           ]}
         },
       ]);
-    
-    
-
-
   }  
 
-    
+  // if enteredTitle and enteredDescription are empty the border color is red
+   
+
+
+
+
+
     
     
       
@@ -76,21 +78,23 @@ export const EventForm = ({onCreateEvent}) =>  {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Title</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input,  styles.inputError]}
               placeholder="Enter title"
               value={enteredTitle}
               onChangeText={changeTitleHandler}
+              
             />
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Description</Text>
             <TextInput
-              style={styles.inputDescription}
+              style={[styles.inputDescription, styles.inputError]}
               placeholder="Enter description"
               value={enteredDescription}
               onChangeText={changeDescriptionHandler}
               multiline
               numberOfLines={10}
+             
             />
           </View>
           <View style={styles.inputContainer}>
@@ -141,7 +145,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         color: Colors.tertiary,
         width: '100%',
-        
     },
     inputDescription:{
       fontSize: 18,
@@ -152,7 +155,6 @@ const styles = StyleSheet.create({
       color: Colors.tertiary,
       width: '100%',
       height: '100%',
-     
     },
     buttonContainer:{
         flexDirection: 'row',
@@ -171,11 +173,14 @@ const styles = StyleSheet.create({
         textAlign: 'center',  
     },
     sendBtn:{
-     
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
-       
-      
-    }
+    },
+    inputError:{
+        borderColor: 'red',
+        borderWidth: 1.5,
+        
+    },
+
 })
