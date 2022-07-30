@@ -1,5 +1,5 @@
 import {useState,useEffect,useContext} from 'react';
-import {Text} from 'react-native';
+import {Text, StyleSheet, View} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -46,9 +46,11 @@ function AuthStack() {
 function AuthenticatedStack() {
  
   return (
-    
+   
     <Tab.Navigator
-      barStyle={{ backgroundColor: Colors.primary }}
+      barStyle={{ 
+        backgroundColor: Colors.primary, 
+        }}
       activeColor= '#fff'
       inactiveColor={Colors.secondary}
       initialRouteName='Day'
@@ -96,6 +98,7 @@ function AuthenticatedStack() {
 
        
     </Tab.Navigator>
+    
   );
 }
 
@@ -138,7 +141,7 @@ function Root() {
   }, []);
 
   if (isTryingLogin) {
-    return <Text>App Loading</Text>
+    return <Text style={{justifyContent: 'center',alignItems: 'center',alignSelf:'center',fontSize:18,marginTop:30,fontWeight: 'bold'}}>App Loading</Text>
   } else {
     return <Navigation />;
   }

@@ -14,6 +14,7 @@ export const TimePicker = ({enteredTime,setEnteredTime}) => {
         console.log(currentTime)
         setShow(Platform.OS === 'ios' ? true : false);
         setEnteredTime(currentTime);
+        console.log(selectedTime)
     }
     
     
@@ -25,6 +26,8 @@ export const TimePicker = ({enteredTime,setEnteredTime}) => {
     const showTimepicker = () => {
         showMode('time');
     }
+
+   
 
 // select the time of the chosen date
     const formatTime =  enteredTime.toLocaleTimeString('en-US', {

@@ -36,10 +36,13 @@ export function insertEvent(event) {
           [
             event.title,
             event.description,
-            event.date,
-            event.hour,
+            //Set up date in format YYYY-MM-DD 
+            event.date.toISOString().slice(0,10),
+            //Set up hour in format HH:MM
+            event.hour.toISOString().slice(11,16),
           ],
           (_, result) => {
+           console.log(result);
             resolve(result);
           },
           (_, error) => {
@@ -76,5 +79,38 @@ export function insertEvent(event) {
   }
 
 
-
+// function to clear all events per date
+export function clearEvents(date) {
+  const promise = new Promise((resolve, reject) => {
+    database.transaction((tx) => {
+      tx.executeSql(
+        `DELETE FROM events WHERE date = ?`,
+        [date],
+        (_, result) => {
+          resolve(result);
+        },
+        (_, error) => {
+          reject(error);
+        }
+      );
+    });
+  });
+  return promise;
+}
   
+
+//function to delete single event by id
+export function deleteEvent(id) {
+  const promise = new Promise((resolve, reject) => {
+    database.transaction((tx) => {
+      tx.executeSql(
+        `DELETE  FROM events WHERE id = ?`,
+        [id],
+        (_, result) => {
+          resolve(result);
+        }
+      );
+    });
+  });
+  return promise;
+}

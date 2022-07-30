@@ -24,6 +24,7 @@ export const EventForm = ({onCreateEvent}) =>  {
         setEnteredDescription(description);
     }
    
+  console.log(enteredTime)
  
     
    
@@ -37,6 +38,7 @@ export const EventForm = ({onCreateEvent}) =>  {
         const results = await onCreateEvent(event);
         setEnteredTitle("");
         setEnteredDescription("");  
+        navigate("Day");
         console.log(results);
        
     }
@@ -59,16 +61,9 @@ export const EventForm = ({onCreateEvent}) =>  {
       ]);
   }  
 
-  // if enteredTitle and enteredDescription are empty the border color is red
-   
+ 
 
-
-
-
-
-    
-    
-      
+  
 
     return (
       <>
@@ -78,7 +73,7 @@ export const EventForm = ({onCreateEvent}) =>  {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Title</Text>
             <TextInput
-              style={[styles.input,  styles.inputError]}
+              style={styles.input}
               placeholder="Enter title"
               value={enteredTitle}
               onChangeText={changeTitleHandler}
@@ -88,7 +83,7 @@ export const EventForm = ({onCreateEvent}) =>  {
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Description</Text>
             <TextInput
-              style={[styles.inputDescription, styles.inputError]}
+              style={styles.inputDescription}
               placeholder="Enter description"
               value={enteredDescription}
               onChangeText={changeDescriptionHandler}
@@ -167,7 +162,7 @@ const styles = StyleSheet.create({
         
     },
     cancelBtn:{
-      
+        backgroundColor: Colors.secondary,
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',  
@@ -176,11 +171,8 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
+        backgroundColor: Colors.secondary,
     },
-    inputError:{
-        borderColor: 'red',
-        borderWidth: 1.5,
-        
-    },
+    
 
 })
