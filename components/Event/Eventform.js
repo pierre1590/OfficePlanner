@@ -1,18 +1,20 @@
 import { useState } from "react";
 import { Event } from "../../models/event";
 import {Button} from '../../components/UI/Button';
-import { View, StyleSheet, Text,TextInput,Alert, ScrollView } from "react-native";
+import { View, StyleSheet, Text,TextInput,Alert, ScrollView,Switch } from "react-native";
 import { Colors } from "../../costants/colors";
 import {useNavigation} from "@react-navigation/native";
 import {Datepicker} from "../../components/Datepicker/Datepicker";
 import  { TimePicker } from "../../components/Timepicker/Timepicker";
+import * as Notifications from 'expo-notifications';
+
 
 export const EventForm = ({onCreateEvent}) =>  {
     const [enteredTitle, setEnteredTitle] = useState("");
     const [enteredDescription, setEnteredDescription] = useState("");
     const [enteredDate, setEnteredDate] = useState(new Date());
     const [enteredTime, setEnteredTime] = useState(new Date());
-
+    const [withAlert, setWithAlert]  = useState(false);
 
     const {navigate} = useNavigation();
 
@@ -26,21 +28,26 @@ export const EventForm = ({onCreateEvent}) =>  {
    
   console.log(enteredTime)
  
-    
    
+   
+    
+
     const saveEventHandler = async() => {
         if (enteredTitle.trim().length === 0 || enteredDescription.trim().length === 0 ) {
-            Alert.alert("Blank fields","The title and/or description fields are empty.",[
+            Alert.alert("Blank fields","The title and / or description fields are empty.",[
               {text:'OK'},
           ]);
-        }
+        }else {
         const event = new Event(enteredTitle, enteredDescription,enteredDate,enteredTime);
         const results = await onCreateEvent(event);
+        if(withAlert) {
+          await schedulePushNotification(event);
+        }
         setEnteredTitle("");
         setEnteredDescription("");  
-        navigate("Day");
+       navigate('Day');
         console.log(results);
-       
+        }
     }
 
     //If the user click on Cancel button it return to Day page
@@ -62,52 +69,83 @@ export const EventForm = ({onCreateEvent}) =>  {
   }  
 
  
+  const schedulePushNotification = async (event) => {
+    const trigger = new Date(event.hour);
 
-  
+    try {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: event.title,
+          body: event.description,
+        },
+        trigger,
+      });
+    }
+    catch (e) {
+      console.log(e);
+    }
+  };
 
     return (
       <>
-      
-      <ScrollView style={styles.container}>
-        <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Title</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter title"
-              value={enteredTitle}
-              onChangeText={changeTitleHandler}
-              
-            />
+        <ScrollView style={styles.container}>
+          <View style={styles.form}>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Title</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter title"
+                value={enteredTitle}
+                onChangeText={changeTitleHandler}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Description</Text>
+              <TextInput
+                style={styles.inputDescription}
+                placeholder="Enter description"
+                value={enteredDescription}
+                onChangeText={changeDescriptionHandler}
+                multiline
+                numberOfLines={10}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Datepicker
+                enteredDate={enteredDate}
+                setEnteredDate={setEnteredDate}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <TimePicker
+                enteredTime={enteredTime}
+                setEnteredTime={setEnteredTime}
+              />
+            </View>
+            <View style={styles.inputContainerAlert}>
+              <View>
+                <Text style={styles.label}>Alert</Text>
+                <Text style={styles.textAlert}>
+                  You will receive an alert at the {'\n '}time you set the reminder.
+                </Text>
+              </View>
+              <Switch
+                value={withAlert}
+                onValueChange={(value) => {
+                  setWithAlert(value);
+                }}
+              />
+            </View>
+            <View style={styles.buttonContainer}>
+              <Button onPress={cancelEventHandler} style={styles.cancelBtn}>
+                Cancel
+              </Button>
+              <Button onPress={saveEventHandler} style={styles.sendBtn}>
+                Save
+              </Button>
+            </View>
           </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Description</Text>
-            <TextInput
-              style={styles.inputDescription}
-              placeholder="Enter description"
-              value={enteredDescription}
-              onChangeText={changeDescriptionHandler}
-              multiline
-              numberOfLines={10}
-             
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Datepicker enteredDate={enteredDate} setEnteredDate={setEnteredDate} />
-          </View>
-          <View style={styles.inputContainer}>
-            <TimePicker enteredTime={enteredTime} setEnteredTime={setEnteredTime}/>
-          </View>
-          <View style={styles.buttonContainer}>
-            <Button onPress={cancelEventHandler} style={styles.cancelBtn}>
-              Cancel
-            </Button>
-            <Button onPress={saveEventHandler} style={styles.sendBtn}>
-              Save
-            </Button>
-          </View>      
-        </View>      
-      </ScrollView>
+        </ScrollView>
       </>
     );
   }
@@ -173,6 +211,14 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         backgroundColor: Colors.secondary,
     },
-    
-
+    inputContainerAlert: {
+      flexDirection: 'row',
+      marginTop: 15,
+      alignItems: 'center',
+      justifyContent: 'space-around',
+    },
+    textAlert: {
+      fontSize: 14,
+      color: Colors.secondary,
+    },
 })

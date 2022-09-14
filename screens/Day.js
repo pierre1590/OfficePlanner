@@ -1,122 +1,132 @@
-import {useContext,useState,useEffect} from 'react';
+import {useContext,useState,useCallback,useEffect} from 'react';
 import { StyleSheet, Text, View,Alert, FlatList} from 'react-native';
 import { Colors } from '../costants/colors';
 import {AuthContext} from '../context/auth-context';
 import { IconButton } from '../components/UI/IconButton';
-import { getEvents } from '../util/database';
-import { clearEvents } from '../util/database';
-
+import {clearEvents,getEventsForDate,deleteEvent,editEvent}  from '../util/database';
+import { useFocusEffect} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import {CardComp} from '../components/UI/CardComp';
 
 export const Day = () => {
   const authCtx = useContext(AuthContext);
 
+  const navigation = useNavigation();
+
+ //current date in format YYYY/MM/DD  to be used in database query
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const date = selectedDate.toISOString().split('T')[0];
+
+  
+  
+  const [schedule,setSchedule] = useState([]);
+
+  const [isDeleted,setIsDeleted] = useState(false);
+
+//Retrieve events for current date
+useFocusEffect(
+  useCallback(() => {
+      (async () => {
+        const events = await getEventsForDate(date);
+        setSchedule(events);
+        setIsDeleted(false);
+      })();
+    }, [isDeleted])
+  )
+     
 
  
-
- //current date in format YYYY-MM-DD
-  const date = new Date().toISOString().slice(0,10);
-  
-  //get events for current date with getEventsForDate
-  const [schedule,setSchedule] = useState([] || null);
-
-  //useEffect with try/catch to get events for current date
-  // useEffect(() => {
-  //   (async () => {
-  //     try {
-  //       const events = await getEvents();
-  //       setSchedule(events);
-  //     }
-  //     catch(err) {
-  //       console.log(err);
-  //     }
-  //   })();
-  // }, [date]);
-
-  //useEffect with async/await to get events for current date
-useEffect(()=> {
-  const getAllEvents = async () => {
-    const data = await getEvents(date);
-    setSchedule(data);
-  }
-  getAllEvents();
-},[date]);
-
-
-
- //Clear events from database per date
-  const clearEventsHandler = async (date) => {
+ //Clear schedule from database per date
+  const clearSchedule = async () => { 
     try {
-      await clearEvents(date);
+      await clearEvents(date)
+      .then(()=>setIsDeleted(true));
       setSchedule([]);
+      setIsDeleted(true);
     }
     catch(err) {
       console.log(err);
     }
   }
 
+ //Function to delete single event with id
+  const deleteEventHandler = async (id) => {
+    try {
+      await deleteEvent(id);
+      setIsDeleted(true);
+    }
+    catch(err) {
+      console.log(err);
+    }
+  }
+
+      
+
 
 
   return (
     <>
-    <View style={styles.dateContainer}>
+      <View style={styles.dateContainer}>
+        <IconButton
+          icon="md-exit-outline"
+          size={30}
+          color={Colors.primary}
+          onPress={() => {
+            Alert.alert("Logout", "Are you sure you want to logout?", [
+              {
+                text: "Cancel",
+                style: "cancel",
+              },
+              {
+                text: "OK",
+                onPress: () => authCtx.logout(),
+              },
+            ]);
+          }}
+        />
+        {/*Icon Button to delete all events*/}
+        <IconButton
+          icon="md-trash"
+          size={30}
+          color={Colors.primary}
+          onPress={() => {
+            {
+              /*Alert to confirm delete for today in format 2022/08/01*/
+            }
+            Alert.alert(
+              "Delete",
+              `Are you sure you want to delete all events of ${date}?`,
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                {
+                  text: "OK",
+                  onPress: () => clearSchedule(date),
+                },
+              ]
+            );
+          }}
+        />
+        <Text style={styles.date}>{date}</Text>
+      </View>
 
-    <IconButton
-        icon='md-exit-outline'
-        size={30}
-        color={Colors.primary}
-        onPress={() => {
-        Alert.alert('Logout', 'Are you sure you want to logout?', [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'OK',
-            onPress: () => authCtx.logout(),
-          },
-        ])
-      }}
-      />
-      {/*Icon Button to delete all events*/}
-      <IconButton
-        icon='md-trash'
-        size={30}
-        color={Colors.primary}
-        onPress={() => {
-        Alert.alert('Delete', 'Are you sure you want to delete all events?', [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'OK',
-            onPress: () => clearEventsHandler(date),
-          },
-        ])
-      }}
-      />
+      {/*Create a FlatList with Card */}
+        {schedule.length > 0 ? (
+          <FlatList
+            data={schedule}
+            keyExtractor={(item,index) => index.toString()}
+            renderItem={({ item }) => (
+              <CardComp  hour={item.hour} title={item.title} description={item.description} id={item.id} deleteEventHandler={deleteEventHandler} />
 
-      <Text style={styles.date}>{date}</Text>
-    </View>
-   
-    {schedule.length > 0 ? (
-      <FlatList
-        data={schedule}
-        keyExtractor={(item,index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.event}>
-              <Text style={styles.hour}>{item.hour}</Text>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.description}>{item.description}</Text>
+            )}
+          />
+        ) : (
+          <View style={styles.noEvents}>
+            <Text style={styles.noEventsText}>No events for today</Text>
           </View>
         )}
-        
-      />
-    ) : (
-      <View style={styles.noEvents}>
-        <Text style={styles.noEventsText}>No events</Text>
-      </View>
-    )}
     </>
   );
 }
@@ -133,8 +143,9 @@ const styles = StyleSheet.create({
    flexDirection: 'row',
    fontSize:20,
   },
+ 
   date: {
-    fontSize: 22,
+    fontSize: 28,
     marginRight: 50,
     color: Colors.primary,
     fontWeight: "bold",
@@ -144,42 +155,16 @@ const styles = StyleSheet.create({
   eventsContainer:{
     marginTop: 20,
   },
-  event:{
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 20,
-    padding: 15,
-    borderRadius: 10,
-    backgroundColor: Colors.primaryLight,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  title:{
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: Colors.secondary,
-  },
-  description:{
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontSize: 18,
-  },
-  hour:{
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: Colors.secondary,
-  },
   noEvents: {
     justifyContent: 'center',
     alignItems: 'center',
     margin: 30,
+    padding: 15,
   },
   noEventsText: {
-    fontSize: 25,
+    fontSize: 30,
     fontWeight: 'bold',
+    padding: 10,
+    color: Colors.secondary,
   }
 });

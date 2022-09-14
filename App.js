@@ -1,10 +1,9 @@
 import {useState,useEffect,useContext} from 'react';
-import {Text, StyleSheet, View} from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+import {Platform} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {StatusBar} from 'expo-status-bar';
 import {Colors} from './costants/colors';
-import {SplashScreen} from './screens/SplashScreen';
 import {Login} from './screens/Login';
 import {SignUp} from './screens/SignUp';
 import AuthContextProvider, {AuthContext} from './context/auth-context';
@@ -12,14 +11,29 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Day} from './screens/Day';
 import {Calendar} from './screens/Calendar';
 import {AddEvent} from './screens/AddEvent';
+import {EditEvent} from './screens/EditEvent';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {init} from './util/database'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import {Ionicons} from '@expo/vector-icons';
+import AppLoading from 'expo-app-loading';
+import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
 
 
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => {
+    return {
+      shouldShowAlert: true,
+      shouldSetBadge: true,
+      shouldPlaySound: true,
+    };
+  }
+});
+
 
 
 function AuthStack() {
@@ -54,6 +68,7 @@ function AuthenticatedStack() {
       activeColor= '#fff'
       inactiveColor={Colors.secondary}
       initialRouteName='Day'
+      
     >
    
      <Tab.Screen
@@ -102,23 +117,23 @@ function AuthenticatedStack() {
   );
 }
 
-      
-   
-
-  
-
 function Navigation() {
   const authCtx = useContext(AuthContext);
-
+  
   return (
-   <>
+    <>
     <NavigationContainer>
       {!authCtx.isAuthenticated && <AuthStack />}
       {authCtx.isAuthenticated && <AuthenticatedStack />}
     </NavigationContainer>
     </>
   );
-}
+} 
+
+  
+
+      
+     
   
 
 function Root() {
@@ -141,7 +156,7 @@ function Root() {
   }, []);
 
   if (isTryingLogin) {
-    return <Text style={{justifyContent: 'center',alignItems: 'center',alignSelf:'center',fontSize:18,marginTop:30,fontWeight: 'bold'}}>App Loading</Text>
+    return <AppLoading />;
   } else {
     return <Navigation />;
   }
@@ -150,6 +165,7 @@ function Root() {
 
 export default function App() {
   const [dbInitialized, setDbInitialized] = useState(false);
+  const [expoPushToken, setExpoPushToken] = useState('');
 
   useEffect(() => {
     init().then(() => {
@@ -160,14 +176,60 @@ export default function App() {
     })
   }, []);
 
-  if (!dbInitialized) {
-    return <Text>App Loading</Text>
+if(!dbInitialized) {
+  return  <AppLoading />;
+}
+
+useEffect(() => {
+  registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+
+  Notifications.addNotificationReceivedListener(notification => {
+    console.log(notification);
+  });
+
+  Notifications.addNotificationResponseReceivedListener(response => {
+    console.log(response);
+  });
+
+  return () => {
+    Notifications.removeNotificationSubscription(Notifications);
+    Notifications.removeNotificationSubscription(response);
   }
-  
+})
+
+const registerForPushNotificationsAsync = async () => {
+  let token;
+  if(Device.isDevice) {
+    const {status: existingStatus} = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if(existingStatus !== 'granted') {
+      const {status} = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if(finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+  } else {
+    if(Platform.OS === 'android') {
+     Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+  }
+}
+return token;
+}
+
+
   return (
     <>
       {/* Use SafeAreaView to avoid the status bar overlapping the content */}
-      <StatusBar style="auto" />
+      <StatusBar style='auto'/>
      <SafeAreaView style={{flex:1,marginTop:40}}>
         <AuthContextProvider>
           <Root />

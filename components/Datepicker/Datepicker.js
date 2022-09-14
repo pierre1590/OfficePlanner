@@ -25,14 +25,14 @@ export const Datepicker = ({enteredDate, setEnteredDate}) => {
       showMode('date');
   }
  
-  const formatDate =  enteredDate.toLocaleDateString('en-GB').split('/').reverse().join('/');
-
+  
+  
 return (
     <View >
       <Text style={{ fontSize: 18, fontWeight: "bold" }}>Select date</Text>
       <View style={styles.input}>
          <Text style={{ fontSize: 18, color:Colors.tertiary,top:2 }}onPress={showDatepicker}> 
-            {formatDate || ''}
+            {enteredDate ? enteredDate?.toISOString().split('T')[0] : 'Select date'}
           </Text>
           <Ionicons name="md-calendar" size={20} color={Colors.tertiary} />
       </View>

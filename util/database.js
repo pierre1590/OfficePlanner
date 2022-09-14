@@ -16,6 +16,7 @@ export function init() {
               )`,
               [],
               () => {
+                
                   resolve();
                 },
                 (_, error) => {
@@ -32,18 +33,19 @@ export function insertEvent(event) {
     const promise = new Promise((resolve, reject) => {
       database.transaction((tx) => {
         tx.executeSql(
-          `INSERT INTO events (title, description,date, hour) VALUES (?, ?, ?, ?)`,
+          `INSERT INTO events (id,title, description,date, hour) VALUES (?, ?, ?, ?,?)`,
           [
+            event.id,
             event.title,
             event.description,
-            //Set up date in format YYYY-MM-DD 
-            event.date.toISOString().slice(0,10),
-            //Set up hour in format HH:MM
-            event.hour.toISOString().slice(11,16),
+            // Set up date 
+           event.date.toISOString().split('T')[0],
+          // Set up time in Italian format HH:MM with am/pm on android
+            event.hour.toLocaleTimeString('it-IT', {hour: '2-digit', minute: '2-digit', hour12: true}),
+            
           ],
           (_, result) => {
-           console.log(result);
-            resolve(result);
+          resolve(result);
           },
           (_, error) => {
             reject(error);
@@ -51,7 +53,6 @@ export function insertEvent(event) {
         );
       });
     });
-  
     return promise;
   }
 
@@ -64,7 +65,13 @@ export function insertEvent(event) {
           [],
           (_, result) => {
             const dbEvent = result.rows._array.map((row) => {
-              return new Event(row.title, row.description, row.date, row.hour);
+              return new Event(
+                row.title,
+                row.description,
+                row.date,
+                row.hour,
+                row.id
+              );
             });
             console.log(dbEvent);
             resolve(dbEvent);
@@ -84,7 +91,7 @@ export function clearEvents(date) {
   const promise = new Promise((resolve, reject) => {
     database.transaction((tx) => {
       tx.executeSql(
-        `DELETE FROM events WHERE date = ?`,
+        `DELETE  FROM events WHERE date = ?`,
         [date],
         (_, result) => {
           resolve(result);
@@ -97,20 +104,54 @@ export function clearEvents(date) {
   });
   return promise;
 }
-  
 
-//function to delete single event by id
-export function deleteEvent(id) {
+
+// function to retrieve all events for a specific date
+export function getEventsForDate(date) {
   const promise = new Promise((resolve, reject) => {
     database.transaction((tx) => {
       tx.executeSql(
-        `DELETE  FROM events WHERE id = ?`,
-        [id],
+        `SELECT * FROM events WHERE date = ?`,
+        [date],
         (_, result) => {
-          resolve(result);
+          const dbEvent = result.rows._array.map((row) => {
+            return new Event(
+              row.title,
+              row.description,
+              row.date,
+              row.hour,
+              row.id
+            );
+          });
+          console.log(dbEvent);
+          resolve(dbEvent);
         }
       );
     });
   });
   return promise;
 }
+
+
+// function to delete event per id
+export function deleteEvent(id) {
+  const promise = new Promise((resolve, reject) => {
+    database.transaction((tx) => {
+      tx.executeSql(
+        `DELETE FROM events WHERE id = ?`,
+        [id],
+        (_, result) => {
+          console.log(result);
+          resolve(result);
+        },
+        (_, error) => {
+          reject(error);
+        }
+      );
+    });
+  });
+  return promise;
+}
+
+
+

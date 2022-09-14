@@ -30,7 +30,6 @@ return (
         setIsAuthenticating(true);
         createUser(values)  
         .then(() => {
-          
           const token = createUser(values);
           authCtx.authenticate(token);
         })
