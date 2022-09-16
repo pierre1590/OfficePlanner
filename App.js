@@ -18,8 +18,8 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import {Ionicons} from '@expo/vector-icons';
 import AppLoading from 'expo-app-loading';
 import * as Notifications from 'expo-notifications';
+import * as Permissions from 'expo-permissions';
 import * as Device from 'expo-device';
-
 
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -28,10 +28,10 @@ Notifications.setNotificationHandler({
   handleNotification: async () => {
     return {
       shouldShowAlert: true,
+      shouldPlaySound: false,
       shouldSetBadge: true,
-      shouldPlaySound: true,
     };
-  }
+  },
 });
 
 
@@ -167,63 +167,70 @@ export default function App() {
   const [dbInitialized, setDbInitialized] = useState(false);
   const [expoPushToken, setExpoPushToken] = useState('');
 
+// useEffect to init setDbInitialized to true and register for push notifications
   useEffect(() => {
-    init().then(() => {
-      setDbInitialized(true);
-    })
-    .catch(err => {
-      console.log(err);
-    })
+    init()
+      .then(() => {
+        setDbInitialized(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
   }, []);
 
-if(!dbInitialized) {
-  return  <AppLoading />;
-}
 
-useEffect(() => {
-  registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+ 
+  // useEffect(() => {
+  //   init()
+  //     .then(() => {
+  //       setDbInitialized(true);
+  //     })
+  //     .catch((err) => {
+  //       console.log('Initializing db failed.');
+  //       console.log(err);
+  //     });
+  // }, []);
 
-  Notifications.addNotificationReceivedListener(notification => {
-    console.log(notification);
-  });
-
-  Notifications.addNotificationResponseReceivedListener(response => {
-    console.log(response);
-  });
-
-  return () => {
-    Notifications.removeNotificationSubscription(Notifications);
-    Notifications.removeNotificationSubscription(response);
-  }
-})
-
-const registerForPushNotificationsAsync = async () => {
-  let token;
-  if(Device.isDevice) {
-    const {status: existingStatus} = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if(existingStatus !== 'granted') {
-      const {status} = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
+  const registerForPushNotificationsAsync = async () => {
+    let token;
+    if (Device.isDevice) {
+      const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(token);
+    } else {
+      alert('Must use physical device for Push Notifications');
     }
-    if(finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
-  } else {
-    if(Platform.OS === 'android') {
-     Notifications.setNotificationChannelAsync('default', {
+  
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('default', {
         name: 'default',
         importance: Notifications.AndroidImportance.MAX,
         vibrationPattern: [0, 250, 250, 250],
         lightColor: '#FF231F7C',
       });
-  }
+    }
+      return token;
+  };
+  
+
+if(!dbInitialized) {
+  return  <AppLoading />;
 }
-return token;
-}
+
+
+
 
 
   return (

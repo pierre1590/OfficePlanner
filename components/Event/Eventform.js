@@ -9,12 +9,25 @@ import  { TimePicker } from "../../components/Timepicker/Timepicker";
 import * as Notifications from 'expo-notifications';
 
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => {
+    return {
+      shouldShowAlert: true,
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+    };
+  },
+});
+
+
 export const EventForm = ({onCreateEvent}) =>  {
     const [enteredTitle, setEnteredTitle] = useState("");
     const [enteredDescription, setEnteredDescription] = useState("");
     const [enteredDate, setEnteredDate] = useState(new Date());
     const [enteredTime, setEnteredTime] = useState(new Date());
     const [withAlert, setWithAlert]  = useState(false);
+   
+
 
     const {navigate} = useNavigation();
 
@@ -25,9 +38,6 @@ export const EventForm = ({onCreateEvent}) =>  {
     const changeDescriptionHandler = (description) => {
         setEnteredDescription(description);
     }
-   
-  console.log(enteredTime)
- 
    
    
     
@@ -40,8 +50,8 @@ export const EventForm = ({onCreateEvent}) =>  {
         }else {
         const event = new Event(enteredTitle, enteredDescription,enteredDate,enteredTime);
         const results = await onCreateEvent(event);
-        if(withAlert) {
-          await schedulePushNotification(event);
+        if (withAlert) {
+          await scheduleEventNotification(event);
         }
         setEnteredTitle("");
         setEnteredDescription("");  
@@ -50,6 +60,28 @@ export const EventForm = ({onCreateEvent}) =>  {
         }
     }
 
+
+    const scheduleEventNotification = async (event) => {
+      const trigger = new Date(event.hour);
+
+      try {
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "Office Planner",
+            body: event.description,
+          },
+          trigger,
+        });
+        console.log("Notification scheduled");
+      } catch (error) {
+        alert("Error scheduling notification");
+      }
+    };
+
+
+    
+
+  
     //If the user click on Cancel button it return to Day page
     const cancelEventHandler = () => {
       Alert.alert('Cancel', 'Are you sure you want to cancel?', [
@@ -68,23 +100,9 @@ export const EventForm = ({onCreateEvent}) =>  {
       ]);
   }  
 
- 
-  const schedulePushNotification = async (event) => {
-    const trigger = new Date(event.hour);
 
-    try {
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: event.title,
-          body: event.description,
-        },
-        trigger,
-      });
-    }
-    catch (e) {
-      console.log(e);
-    }
-  };
+ 
+  
 
     return (
       <>

@@ -3784,6 +3784,11 @@ expo-notifications@~0.15.4:
     fs-extra "^9.1.0"
     uuid "^3.4.0"
 
+expo-permissions@~13.2.0:
+  version "13.2.0"
+  resolved "https://registry.yarnpkg.com/expo-permissions/-/expo-permissions-13.2.0.tgz#9306f1ae3c49dbe9157f948983486ccb19fc2989"
+  integrity sha512-fAvutJjlUjlmyR2jjI9uQT0LXQ+A3U8hZnA4twQG8eXEURR3/V5WSGkx5wwX+7OF6qWR68rvs7Xjkd3ghsCm4w==
+
 expo-splash-screen@~0.15.0:
   version "0.15.1"
   resolved "https://registry.npmjs.org/expo-splash-screen/-/expo-splash-screen-0.15.1.tgz"
