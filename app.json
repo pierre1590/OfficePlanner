@@ -10,9 +10,6 @@
       "image": "./assets/splash.png",
       "resizeMode": "cover"
     },
-    "notification": {
-      "icon": "./assets/favicon.png"
-    },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -20,12 +17,19 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification",
+          "location",
+          "fetch",
+          "notification"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png"
-        
+        "foregroundImage": "./assets/adaptive-icon.png" 
       },
       "package": "com.pierre1590.OfficePlanner"
     },
@@ -36,7 +40,7 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/icon.png"
+          "icon": "./assets/img/notification-icon.png"
         }
       ]
     ],
