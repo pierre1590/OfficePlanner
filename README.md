@@ -15,7 +15,7 @@
 
 ## Installation
   1)  To install this project, clone the repository.
-  2)  Create a `.env` file in the root directory of the project to store your Firebase API keys.
+  2)  Rename the file `.env.example` to `.env` and add your firebase API KEY like this[.env.example].
   3)  Run `npm install` to install the dependencies.
   4)  Run `npm start` to start the project.
 
