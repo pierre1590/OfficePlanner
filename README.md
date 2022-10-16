@@ -15,10 +15,10 @@
   4)  Run `npm start` to start the project.
 
 ## Usage
-    1)  To use this project, you must have Expo installed on your mobile device.
-    2)  Scan the QR code that appears in the terminal after running `npm start` to open the project on your mobile device.
-    3)  You can also run the project on an Android or iOS simulator.
+1)  To use this project, you must have Expo installed on your mobile device.
+2)  Scan the QR code that appears in the terminal after running `npm start` to open the project on your mobile device.
+3)  You can also run the project on an Android or iOS simulator.
 
-    
+
 
 
