@@ -1,6 +1,6 @@
 # Office Planner
-[]: # Version: 1.0.1
-[]: # Date: 2022-10-13
+[Version](Version: 1.0.1)
+[Date] (Date: 2022-10-13)
 
 ## Project
     
