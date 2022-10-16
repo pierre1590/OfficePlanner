@@ -15,7 +15,7 @@
 
 ## Installation
   1)  To install this project, clone the repository.
-  2)  Rename the file `.env.example` to `.env` and add your firebase API KEY like this[.env.example].
+  2)  Rename the file `.env.example` to `.env` and add your firebase API KEY as in[this file](https://github.com/pierre1590/OfficePlanner/blob/main/.env.example).
   3)  Run `npm install` to install the dependencies.
   4)  Run `npm start` to start the project.
 
