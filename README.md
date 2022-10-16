@@ -1,6 +1,5 @@
 # Office Planner
-[Version][Version: 1.0.1]
-[Date][Date: 2022-10-13]
+[Date][http://www.time.is]
 
 ## Project
     
