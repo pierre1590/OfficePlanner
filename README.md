@@ -1,9 +1,24 @@
 # Office Planner
-[Date][http://www.time.is]
+
 
 ## Project
-    
-   This is a project to create a web application for office planning.
+   This is a project to create a mobile app that will allow users to plan their day and keep track of their tasks.
+   It's made up of three components: Today, Add Event, and Calendar. Today is the main page that shows the user's tasks for the day. Add Event is a page that allows the user to add a new event to their calendar. Calendar is a page that shows the user's calendar for the month.
 
+## Technologies
+   This project is made using React Native, Expo and Firebase.
+
+## Installation
+  1)  To install this project, clone the repository.
+  2)  Create a `.env` file in the root directory of the project to store your Firebase API keys.
+  3)  Run `npm install` to install the dependencies.
+  4)  Run `npm start` to start the project.
+
+## Usage
+    1)  To use this project, you must have Expo installed on your mobile device.
+    2)  Scan the QR code that appears in the terminal after running `npm start` to open the project on your mobile device.
+    3)  You can also run the project on an Android or iOS simulator.
+
+    
 
 
