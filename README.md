@@ -5,6 +5,9 @@
    This is a project to create a mobile app that will allow users to plan their day and keep track of their tasks.
    It's made up of three components: Today, Add Event, and Calendar. Today is the main page that shows the user's tasks for the day. Add Event is a page that allows the user to add a new event to their calendar. Calendar is a page that shows the user's calendar for the month.
 
+## Gallery
+   <img src="" width="200" height="400" /> <img src="" width="200" height="400" /> <img src="" width="200" height="400" />
+
 ## Technologies
    This project is made using React Native, Expo and Firebase.
 
