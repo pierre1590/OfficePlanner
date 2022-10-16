@@ -8,7 +8,7 @@
 ## Gallery
    <img src="https://i.ibb.co/XW33QxJ/Phone4.png" width="200" height="400" /> <img src="https://i.ibb.co/QrTZ7Jd/Phone5.png" width="200" height="400" />
     <img src="https://i.ibb.co/8BJ6HxK/Phone1.png" width="200" height="400" /> <img src="https://i.ibb.co/7bZ6Z4T/Phone2.png" width="200" height="400" />
-   <img src="https://i.ibb.co/bWzWM97/Phone3.png" width="200" height="400" />  <img src="" width="200" height="400" />
+   <img src="https://i.ibb.co/bWzWM97/Phone3.png" width="200" height="400" />
 
 ## Technologies
    This project is made using React Native, Expo and Firebase.
