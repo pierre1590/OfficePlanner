@@ -5,5 +5,6 @@ export class Event {
         this.date = date;
         this.hour = hour;
         this.id = id;
+       
       }
 }

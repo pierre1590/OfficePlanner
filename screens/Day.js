@@ -1,9 +1,9 @@
-import {useContext,useState,useCallback,useEffect} from 'react';
+import {useContext,useState,useCallback} from 'react';
 import { StyleSheet, Text, View,Alert, FlatList} from 'react-native';
 import { Colors } from '../costants/colors';
 import {AuthContext} from '../context/auth-context';
 import { IconButton } from '../components/UI/IconButton';
-import {clearEvents,getEventsForDate,deleteEvent,editEvent}  from '../util/database';
+import {clearEvents,getEventsForDate,deleteEvent}  from '../util/database';
 import { useFocusEffect} from '@react-navigation/native';
 import {useNavigation} from '@react-navigation/native';
 import {CardComp} from '../components/UI/CardComp';
@@ -13,27 +13,30 @@ export const Day = () => {
 
   const navigation = useNavigation();
 
- //current date in format YYYY/MM/DD  to be used in database query
+
   const [selectedDate, setSelectedDate] = useState(new Date());
   const date = selectedDate.toISOString().split('T')[0];
 
   
   
   const [schedule,setSchedule] = useState([]);
-
   const [isDeleted,setIsDeleted] = useState(false);
 
-//Retrieve events for current date
-useFocusEffect(
-  useCallback(() => {
-      (async () => {
+
+//Retrieve events for current date and order them by time 
+  useFocusEffect(
+    useCallback(() => {
+      const loadEvents = async () => {
         const events = await getEventsForDate(date);
         setSchedule(events);
-        setIsDeleted(false);
-      })();
-    }, [isDeleted])
-  )
-     
+      }
+      loadEvents();
+    },[isDeleted])
+  );
+
+ 
+
+
 
  
  //Clear schedule from database per date
@@ -60,7 +63,7 @@ useFocusEffect(
     }
   }
 
-      
+ 
 
 
 
@@ -84,15 +87,16 @@ useFocusEffect(
             ]);
           }}
         />
+       <Text style={styles.date}>{date}</Text>
+
         {/*Icon Button to delete all events*/}
         <IconButton
           icon="md-trash"
           size={30}
-          color={Colors.primary}
+          
+          color={Colors.error}
           onPress={() => {
-            {
-              /*Alert to confirm delete for today in format 2022/08/01*/
-            }
+           
             Alert.alert(
               "Delete",
               `Are you sure you want to delete all events of ${date}?`,
@@ -109,7 +113,7 @@ useFocusEffect(
             );
           }}
         />
-        <Text style={styles.date}>{date}</Text>
+       
       </View>
 
       {/*Create a FlatList with Card */}
@@ -118,8 +122,7 @@ useFocusEffect(
             data={schedule}
             keyExtractor={(item,index) => index.toString()}
             renderItem={({ item }) => (
-              <CardComp  hour={item.hour} title={item.title} description={item.description} id={item.id} deleteEventHandler={deleteEventHandler} />
-
+              <CardComp  hour={item.hour} title={item.title} description={item.description} id={item.id} deleteEventHandler={deleteEventHandler}   />
             )}
           />
         ) : (
@@ -137,11 +140,13 @@ useFocusEffect(
 const styles = StyleSheet.create({
  dateContainer:{
    marginTop:15,
-   margin:15,
-   justifyContent: 'space-between',  
-   alignItems: 'center',
+   marginLeft:20,
+   marginRight:15,
+   justifyContent: 'space-around',  
+   alignItems: 'space-around',
    flexDirection: 'row',
    fontSize:20,
+   fontWeight:'bold',
   },
  
   date: {
@@ -166,5 +171,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     padding: 10,
     color: Colors.secondary,
-  }
+  },
+  
 });

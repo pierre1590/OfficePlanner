@@ -12,7 +12,7 @@ export const TimePicker = ({enteredTime,setEnteredTime}) => {
     const onChange = (event,selectedTime) => {
         const currentTime = selectedTime  || enteredTime;
         console.log(currentTime)
-        setShow(Platform.OS === 'ios' ? true : false);
+        setShow(Platform.OS === 'ios');
         setEnteredTime(currentTime);
         console.log(selectedTime)
     }
@@ -28,13 +28,11 @@ export const TimePicker = ({enteredTime,setEnteredTime}) => {
     }
 
    
-
-// select the time of the chosen date
-    const formatTime =  enteredTime.toLocaleTimeString('en-US', {
-        hour:'2-digit',
-        minute: '2-digit',
-    });
-
+  const formatTime = () => {
+    const hours = enteredTime.getHours() < 10 ? `0${enteredTime.getHours()}` : enteredTime.getHours();
+    const minutes = enteredTime.getMinutes() < 10 ? `0${enteredTime.getMinutes()}` : enteredTime.getMinutes();
+    return `${hours}:${minutes}`;
+  }
     
 
     
@@ -46,8 +44,8 @@ export const TimePicker = ({enteredTime,setEnteredTime}) => {
         <Text style={{fontSize:18,fontWeight: 'bold'}}>Select hour</Text>
         <View style={styles.input}>
          <Text style={{ fontSize: 18, color:Colors.tertiary,top:2 }}onPress={showTimepicker}> 
-            {formatTime || ''}
-          </Text>
+            {formatTime(enteredTime)}
+        </Text>
           <Ionicons name="md-time" size={20} color={Colors.tertiary} />
       </View>
         

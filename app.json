@@ -1,8 +1,10 @@
+
+
 {
   "expo": {
     "name": "Office Planner",
     "slug": "OfficePlanner",
-    "version": "1.0.0",
+    "version": "2.0.1",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -12,6 +14,12 @@
     },
     "updates": {
       "fallbackToCacheTimeout": 0
+    },
+    "notification": {
+      "icon": "./assets/notificationicon.png",
+      "color": "#10B",
+      "androidMode": "default",
+      "androidCollapsedTitle": "Office Planner"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -29,25 +37,28 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png" 
+        "foregroundImage": "./assets/adaptiveicon.png"
       },
+      
       "package": "com.pierre1590.OfficePlanner"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/img/notification-icon.png"
-        }
-      ]
-    ],
+    
     "extra": {
       "eas": {
         "projectId": "e5b1dded-720d-40cc-9d9f-73c62ada338c"
       }
-    }
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notificationicon.png",
+          "color": "#10B"
+        }
+      ]
+    ]
   }
 }

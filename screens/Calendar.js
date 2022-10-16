@@ -1,5 +1,6 @@
-import {useState,useEffect,useContext} from 'react';
+import {useState,useEffect,useContext,useCallback} from 'react';
 import {Text,StyleSheet,View, FlatList} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 import CalendarPicker from 'react-native-calendar-picker';
 import {IconButton} from '../components/UI/IconButton';
 import {Colors} from '../costants/colors';
@@ -7,6 +8,7 @@ import {AuthContext} from '../context/auth-context';
 import { Alert } from 'react-native';
 import { getEventsForDate,deleteEvent } from '../util/database';
 import {CardComp} from '../components/UI/CardComp';
+
 
 
 
@@ -20,6 +22,7 @@ export const Calendar = () => {
   
    const [schedule,setSchedule] = useState([] || '');
    const [isDeleted,setIsDeleted] = useState(false);
+   
   
    
       useEffect(() => {
@@ -35,19 +38,41 @@ export const Calendar = () => {
         })();
       }, []);
   
-     // useEffect to show events in the calendar for selected date
-      useEffect(() => {
-        const fetchData = async () => {
-          try {
+      //Retrieve events for current date and order them by time with useFocusEffect
+      useFocusEffect(
+        useCallback(() => {
+          const loadEvents = async () => {
+            try{
             const events = await getEventsForDate(startDate);
             setSchedule(events);
             setIsDeleted(false);
-          } catch (error) {
-            console.log(error);
+            }
+            catch(err) {
+              console.log(err);
+            }
           }
-        }
-        fetchData();
-      }, [startDate,isDeleted]);
+          loadEvents();
+        },[startDate,isDeleted])
+      )
+
+
+
+
+     // useEffect to show events in the calendar for selected date
+      // useEffect(() => {
+      //   const fetchData = async () => {
+      //     try {
+      //       const events = await getEventsForDate(startDate);
+      //       setSchedule(events);
+      //       setIsDeleted(false);
+      //     } catch (error) {
+      //       console.log(error);
+      //     }
+      //   }
+      //   fetchData();
+      // }, [startDate,isDeleted]);
+
+
   
       //Function to delete single event with id
   const deleteEventHandler = async (id) => {
@@ -60,7 +85,9 @@ export const Calendar = () => {
     }
   }
       
-  console.log(schedule);
+  
+  
+  
 
     return (
       <>
@@ -104,21 +131,21 @@ export const Calendar = () => {
 
           {/* Show the events for selected date width CardComp */}
           {schedule.length > 0 ? (
-            <FlatList
-              data={schedule}
-              keyExtractor={(item,index) => index.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.cardContainer}>
+            
+              <FlatList
+              style={styles.cardContainer}
+                data={schedule}
+                keyExtractor={( index) => index.toString()}
+                renderItem={({ item }) => (
                   <CardComp
-                  title={item.title}
-                  description={item.description}
-                  hour={item.hour}
-                  id={item.id}
-                  deleteEventHandler={deleteEventHandler}
-                />
-                </View>       
-              )}
-            />
+                    title={item.title}
+                    description={item.description}
+                    hour={item.hour}
+                    id={item.id}
+                    deleteEventHandler={deleteEventHandler}
+                  />
+                )}
+              />
           ) : (
             <View style={styles.noEvents}>
               <Text style={styles.noEventsText}>No events</Text>
@@ -134,9 +161,14 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     margin: 10,
+   
+    borderRadius: 10,
   },
   cardContainer: {
-    margin:0,
+    backgroundColor: Colors.lightGrey,
+    borderRadius: 10,
+    borderBottom:20,
+    
   },
   previousTitleStyle: {
     fontSize: 18,

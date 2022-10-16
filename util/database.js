@@ -1,6 +1,7 @@
 import * as SQLite from 'expo-sqlite';
 import {Event} from '../models/event';
 
+
 const database = SQLite.openDatabase('events.db');
 
 export function init() {
@@ -30,6 +31,10 @@ export function init() {
 
 
 export function insertEvent(event) {
+  // if hours < 10 add 0 before and moniutes < 10 add 0 before 
+  const hours = event.hour.getHours() < 10 ? '0' + event.hour.getHours() : event.hour.getHours();
+  const minutes = event.hour.getMinutes() < 10 ? '0' + event.hour.getMinutes() : event.hour.getMinutes();
+  const hour = hours + ':' + minutes;
     const promise = new Promise((resolve, reject) => {
       database.transaction((tx) => {
         tx.executeSql(
@@ -39,10 +44,9 @@ export function insertEvent(event) {
             event.title,
             event.description,
             // Set up date 
-           event.date.toISOString().split('T')[0],
-          // Set up time in Italian format HH:MM with am/pm on android
-            event.hour.toLocaleTimeString('it-IT', {hour: '2-digit', minute: '2-digit', hour12: true}),
-            
+            event.date.toISOString().split('T')[0],
+            // Set up hour with new Date().setHours() and new Date().setMinutes()
+            hour
           ],
           (_, result) => {
           resolve(result);
@@ -56,34 +60,6 @@ export function insertEvent(event) {
     return promise;
   }
 
-  // function to retrieve all events
-  export function getEvents() {
-    const promise = new Promise((resolve, reject) => {
-      database.transaction((tx) => {
-        tx.executeSql(
-          `SELECT * FROM events`,
-          [],
-          (_, result) => {
-            const dbEvent = result.rows._array.map((row) => {
-              return new Event(
-                row.title,
-                row.description,
-                row.date,
-                row.hour,
-                row.id
-              );
-            });
-            console.log(dbEvent);
-            resolve(dbEvent);
-          },
-          (_, error) => {
-            reject(error);
-          }
-        );
-      });
-    });
-    return promise;
-  }
 
 
 // function to clear all events per date
@@ -106,12 +82,14 @@ export function clearEvents(date) {
 }
 
 
-// function to retrieve all events for a specific date
+// function to retrieve all events for a specific date and order them by hour
 export function getEventsForDate(date) {
   const promise = new Promise((resolve, reject) => {
     database.transaction((tx) => {
       tx.executeSql(
-        `SELECT * FROM events WHERE date = ?`,
+        // order by date and order by hour from 00:01AM to 23:59PM
+
+        `SELECT * FROM events WHERE date = ? ORDER BY hour ASC`,
         [date],
         (_, result) => {
           const dbEvent = result.rows._array.map((row) => {

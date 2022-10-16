@@ -17,22 +17,22 @@ import {init} from './util/database'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import {Ionicons} from '@expo/vector-icons';
 import AppLoading from 'expo-app-loading';
-import * as Notifications from 'expo-notifications';
-import * as Permissions from 'expo-permissions';
-import * as Device from 'expo-device';
+// import * as Notifications from 'expo-notifications';
+// import * as Permissions from 'expo-permissions';
+// import * as Device from 'expo-device';
 
 const Stack = createNativeStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => {
-    return {
-      shouldShowAlert: true,
-      shouldPlaySound: false,
-      shouldSetBadge: true,
-    };
-  },
-});
+// Notifications.setNotificationHandler({
+//   handleNotification: async () => {
+//     return {
+//       shouldShowAlert: true,
+//       shouldPlaySound: false,
+//       shouldSetBadge: true,
+//     };
+//   },
+// });
 
 
 
@@ -64,12 +64,19 @@ function AuthenticatedStack() {
     <Tab.Navigator
       barStyle={{ 
         backgroundColor: Colors.primary, 
+        borderRadius:50,
         }}
       activeColor= '#fff'
       inactiveColor={Colors.secondary}
       initialRouteName='Day'
-      
+      shifting={true}
     >
+      
+    
+
+
+
+  
    
      <Tab.Screen
         name="Day"
@@ -77,7 +84,7 @@ function AuthenticatedStack() {
         options={{
           title: 'Today',
           tabBarIcon: ({color}) => (
-            <Ionicons name="md-today" color={color} size={30} />
+            <Ionicons name="md-today" color={color} size={28} />
           )
         }}
       /> 
@@ -103,7 +110,7 @@ function AuthenticatedStack() {
           marginTop: 15,
           title: "Calendar",
           tabBarIcon: ({color}) => (
-            <Ionicons name="md-calendar-outline" size={30} color={color} />
+            <Ionicons name="md-calendar-outline" size={28} color={color} />
           ),
         }}
       />
@@ -176,53 +183,43 @@ export default function App() {
       .catch((err) => {
         console.log(err);
       });
-    registerForPushNotificationsAsync().then((token) =>
-      setExpoPushToken(token)
-    );
+    // registerForPushNotificationsAsync().then((token) =>
+    //   setExpoPushToken(token)
+    // );
   }, []);
 
 
  
-  // useEffect(() => {
-  //   init()
-  //     .then(() => {
-  //       setDbInitialized(true);
-  //     })
-  //     .catch((err) => {
-  //       console.log('Initializing db failed.');
-  //       console.log(err);
-  //     });
-  // }, []);
-
-  const registerForPushNotificationsAsync = async () => {
-    let token;
-    if (Device.isDevice) {
-      const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-      let finalStatus = existingStatus;
-      if (existingStatus !== 'granted') {
-        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-        finalStatus = status;
-      }
-      if (finalStatus !== 'granted') {
-        alert('Failed to get push token for push notification!');
-        return;
-      }
-      token = (await Notifications.getExpoPushTokenAsync()).data;
-      console.log(token);
-    } else {
-      alert('Must use physical device for Push Notifications');
-    }
+ 
+  // const registerForPushNotificationsAsync = async () => {
+  //   let token;
+  //   if (Device.isDevice) {
+  //     const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+  //     let finalStatus = existingStatus;
+  //     if (existingStatus !== 'granted') {
+  //       const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+  //       finalStatus = status;
+  //     }
+  //     if (finalStatus !== 'granted') {
+  //       alert('Failed to get push token for push notification!');
+  //       return;
+  //     }
+  //     token = (await Notifications.getExpoPushTokenAsync()).data;
+  //     console.log(token);
+  //   } else {
+  //     alert('Must use physical device for Push Notifications');
+  //   }
   
-    if (Platform.OS === 'android') {
-      Notifications.setNotificationChannelAsync('default', {
-        name: 'default',
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#FF231F7C',
-      });
-    }
-      return token;
-  };
+  //   if (Platform.OS === 'android') {
+  //     Notifications.setNotificationChannelAsync('default', {
+  //       name: 'default',
+  //       importance: Notifications.AndroidImportance.MAX,
+  //       vibrationPattern: [0, 250, 250, 250],
+  //       lightColor: '#FF231F7C',
+  //     });
+  //   }
+  //     return token;
+  // };
   
 
 if(!dbInitialized) {
