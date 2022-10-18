@@ -1,5 +1,29 @@
 # Office Planner
 
+<!-- TALBE OF CONTENTS -->
+<details open="open">
+   <summary>Table of contents</summary>
+      <ol>
+            <li>
+               <a href="#project">About the project</a>
+            </li>
+            <li>
+               <a href="#gallery">Gallery</a>
+            </li>  
+            <li>
+               <a href="#technologies">Technologies</a>
+            </li> 
+            <li>
+               <a href="#installation">Installation</a>
+            </li> 
+            <li>
+               <a href="#usage">Usage</a>
+            </li>  
+            <li>
+               <a href="#buy-app">Buy app</a>
+            </li>
+      </ol>
+</details>
 
 ## Project
    This is a project to create a mobile app that will allow users to plan their day and keep track of their tasks.
