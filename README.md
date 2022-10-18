@@ -26,8 +26,7 @@
 
 
 # Buy app
-   To buy the app, click on the Android logo.
-   [(https://i.ibb.co/0hYJZ3G/Android.png)](https://play.google.com/store/apps/details?id=com.pierre1590.OfficePlanner)
+  [https://i.ibb.co/p4S7Rp1/google-play-badge.png](https://play.google.com/store/apps/details?id=com.pierre1590.OfficePlanner)
 
 
 
