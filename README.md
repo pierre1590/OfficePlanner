@@ -26,8 +26,8 @@
 
 
 # Buy app
-  [https://i.ibb.co/p4S7Rp1/google-play-badge.png](https://play.google.com/store/apps/details?id=com.pierre1590.OfficePlanner)
-
-
+   <a href="https://play.google.com/store/apps/details?id=com.pierre1590.OfficePlanner">
+      <img src="https://i.ibb.co/p4S7Rp1/google-play-badge.png" width="150" height="80">
+   </a>
 
 
