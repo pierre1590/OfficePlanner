@@ -25,5 +25,10 @@
 3)  You can also run the project on an Android or iOS simulator.
 
 
+# Buy app
+   To buy the app, click on the Android logo.
+   [![Android](https://i.ibb.co/0hYJZ3G/Android.png)](https://play.google.com/store/apps/details?id=com.pierre1590.officeplanner)
+
+
 
 
