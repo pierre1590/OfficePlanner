@@ -9,15 +9,15 @@ import  { TimePicker } from "../../components/Timepicker/Timepicker";
 import * as Notifications from 'expo-notifications';
 
 
-// Notifications.setNotificationHandler({
-//   handleNotification: async () => {
-//     return {
-//       shouldShowAlert: true,
-//       shouldPlaySound: true,
-//       shouldSetBadge: true,
-//     };
-//   },
-// });
+Notifications.setNotificationHandler({
+  handleNotification: async () => {
+    return {
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    };
+  },
+});
 
 
 
@@ -26,7 +26,7 @@ export const EventForm = ({onCreateEvent}) =>  {
     const [enteredDescription, setEnteredDescription] = useState("");
     const [enteredDate, setEnteredDate] = useState(new Date());
     const [enteredTime, setEnteredTime] = useState(new Date());
-    // const [withAlert, setWithAlert]  = useState(false);
+    const [withAlert, setWithAlert]  = useState(false);
    
 
 
@@ -51,9 +51,9 @@ export const EventForm = ({onCreateEvent}) =>  {
         }else {
         const event = new Event(enteredTitle, enteredDescription,enteredDate,enteredTime);
         const results = await onCreateEvent(event);
-        // if (withAlert) {
-        //   await scheduleEventNotification(event);
-        // }
+        if (withAlert) {
+          await scheduleEventNotification(event);
+        }
         setEnteredTitle("");
         setEnteredDescription("");  
         navigate('Day');
@@ -61,23 +61,53 @@ export const EventForm = ({onCreateEvent}) =>  {
         }
     }
 
+    // Schedule event for date and hour
+    const scheduleEventNotification = async (event) => {
+      // Set up trigger to show event of a Day
+    const date = new Date(event.date);
+    const hours = event.hour.getHours() < 10 ? '0' + event.hour.getHours() : event.hour.getHours();
+    const minutes = event.hour.getMinutes() < 10 ? '0' + event.hour.getMinutes() : event.hour.getMinutes();
+    // time interval must be greater than 0
+   
+    const timeInterval = new Date(date.setHours(hours,minutes,0,0));
+    console.log(timeInterval);
+    if (timeInterval.getTime() > new Date().getTime()) {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: event.title,
+          body: event.description,
+          sound: "sound.wav",
+        },
+        trigger: {
+          date,
+          timeInterval
+        },
+      });
+    }else {
+      Alert.alert("Invalid date","The date and / or time is invalid.",[
+        {text:'OK'},
+    ]);
+    }
+    }
 
-    // const scheduleEventNotification = async (event) => {
-    //   const trigger = new Date(event.hour);
-
-    //   try {
-    //     await Notifications.scheduleNotificationAsync({
-    //       content: {
-    //         title: "Office Planner",
-    //         body: event.description,
-    //       },
-    //       trigger,
-    //     });
-    //     console.log("Notification scheduled");
-    //   } catch (error) {
-    //     alert("Error scheduling notification");
-    //   }
-    // };
+      // try {
+      //   await Notifications.scheduleNotificationAsync({
+      //     content: {
+      //       title: "Office Planner",
+      //       body: event.description,
+      //       sound: "sound.wav",
+      //     },
+      //     trigger: {
+      //      date,
+      //      timeInterval,
+      //     },
+      //   });
+      //   console.log("Notification scheduled");
+        
+      // } catch (e) {
+      //   Alert.alert('Event notification error', e.message);
+      // }
+   
 
 
     
@@ -141,7 +171,7 @@ export const EventForm = ({onCreateEvent}) =>  {
                 setEnteredTime={setEnteredTime}
               />
             </View>
-            {/* <View style={styles.inputContainerAlert}>
+            <View style={styles.inputContainerAlert}>
               <View>
                 <Text style={styles.label}>Alert</Text>
                 <Text style={styles.textAlert}>
@@ -154,7 +184,7 @@ export const EventForm = ({onCreateEvent}) =>  {
                   setWithAlert(value);
                 }}
               />
-            </View> */}
+            </View>
             <View style={styles.buttonContainer}>
               <Button onPress={cancelEventHandler} style={styles.cancelBtn}>
                 Cancel

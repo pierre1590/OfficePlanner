@@ -8,11 +8,18 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
     },
     "production": {}
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "../../Documents/GooglePlayStore/Key/pc-api-8298153732794900921-631-bef80ec8a374.json"
+      }
+    }
   }
 }
